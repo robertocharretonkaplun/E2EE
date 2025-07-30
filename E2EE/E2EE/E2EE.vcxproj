@@ -169,6 +169,7 @@
     <ClCompile Include="src\NetworkHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\CryptoHelper.h" />
     <ClInclude Include="include\NetworkHelper.h" />
     <ClInclude Include="include\Prerequisites.h" />
     <ClInclude Include="include\Server.h" />
