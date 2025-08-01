@@ -10,6 +10,13 @@ public:
 
 	~Server();
 
-private:
+	bool Start();
+	void WaitForClient();
+	void ReceiveEncryptedMessage();
 
+private:
+	int m_port;
+	int m_clientSock;
+	NetworkHelper m_net;
+	CryptoHelper m_crypto;
 };

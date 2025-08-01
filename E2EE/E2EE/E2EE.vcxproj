@@ -166,6 +166,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\E2EE.cpp" />
+    <ClCompile Include="src\CryptoHelper.cpp" />
     <ClCompile Include="src\NetworkHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
