@@ -1,6 +1,7 @@
 #pragma once
 #include "NetworkHelper.h"
 #include "CryptoHelper.h"
+#include "Prerequisites.h"
 
 class 
 Server {
@@ -10,13 +11,30 @@ public:
 
 	~Server();
 
-	bool Start();
-	void WaitForClient();
-	void ReceiveEncryptedMessage();
+	/**
+	 * @brief Inicia el servidor en el puerto especificado
+	 *
+	 * @return true si el servidor se inicializó correctamente
+	 * @return false si hubo un error
+	 */
+	bool 
+	Start();
+	
+	/**
+	 * @brief Espera a que un cliente se conecte e intercambia claves públicas.
+	 */
+	void 
+	WaitForClient();
+	
+	/**
+	 * @brief Recibe un mensaje cifrado del cliente, lo descifra y lo imprime.
+	 */
+	void 
+	ReceiveEncryptedMessage();
 
 private:
 	int m_port;
-	int m_clientSock;
+	SOCKET m_clientSock;
 	NetworkHelper m_net;
 	CryptoHelper m_crypto;
 };
