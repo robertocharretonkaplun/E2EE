@@ -38,6 +38,9 @@ public:
 	void 
 	SendEncryptedMessage(const std::string& message);
 
+	void
+	SendEncryptedMessageLoop();
+
 private:
 	std::string m_ip;
 	int m_port;

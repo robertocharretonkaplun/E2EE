@@ -1,8 +1,67 @@
-#include "openssl/crypto.h"
-#include <iostream>
+#include "Prerequisites.h"
+#include "Server.h"
+#include "Client.h"
+static void runServer(int port) {
+  Server s(port);
+  if (!s.Start()) { std::cerr << "[Main] No se pudo iniciar.\n"; return; }
+  s.WaitForClient();   // intercambio de claves
+  s.StartReceiveLoop();       // RX en hilo + TX por consola
+}
 
-int 
-main() {
-  std::cout << "OpenSSL version: " << OpenSSL_version(OPENSSL_VERSION) << std::endl;
+static void runClient(const std::string& ip, int port) {
+  Client c(ip, port);
+  if (!c.Connect()) { std::cerr << "[Main] No se pudo conectar.\n"; return; }
+
+  c.ExchangeKeys();          // Recibe pubkey del server y envía la suya
+  c.SendAESKeyEncrypted();   // Envía clave AES cifrada (RSA)
+
+  // Si ya implementaste la recepción en paralelo del cliente, descomenta:
+  // c.StartReceiveLoop();
+
+  c.SendEncryptedMessageLoop();
+}
+
+int main(int argc, char** argv) {
+  std::string mode, ip;
+  int port = 0;
+
+  if (argc >= 2) {
+    mode = argv[1];
+    if (mode == "server") {
+      port = (argc >= 3) ? std::stoi(argv[2]) : 12345;
+    }
+    else if (mode == "client") {
+      if (argc < 4) { std::cerr << "Uso: E2EE client <ip> <port>\n"; return 1; }
+      ip = argv[2];
+      port = std::stoi(argv[3]);
+    }
+    else {
+      std::cerr << "Modo no reconocido. Usa: server | client\n";
+      return 1;
+    }
+  }
+  else {
+    std::cout << "Modo (server/client): ";
+    std::cin >> mode;
+    if (mode == "server") {
+      std::cout << "Puerto: ";
+      std::cin >> port;
+    }
+    else if (mode == "client") {
+      std::cout << "IP: ";
+      std::cin >> ip;
+      std::cout << "Puerto: ";
+      std::cin >> port;
+    }
+    else {
+      std::cerr << "Modo no reconocido.\n";
+      return 1;
+    }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  }
+
+  if (mode == "server") runServer(port);
+  else runClient(ip, port);
+
   return 0;
 }
