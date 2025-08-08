@@ -41,6 +41,12 @@ public:
 	void
 	SendEncryptedMessageLoop();
 
+	void
+	StartChatLoop();
+
+	void 
+	StartReceiveLoop();     // Recibir y mostrar mensajes del servidor
+
 private:
 	std::string m_ip;
 	int m_port;

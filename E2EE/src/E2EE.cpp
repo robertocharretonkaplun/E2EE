@@ -3,22 +3,23 @@
 #include "Client.h"
 static void runServer(int port) {
   Server s(port);
-  if (!s.Start()) { std::cerr << "[Main] No se pudo iniciar.\n"; return; }
-  s.WaitForClient();   // intercambio de claves
-  s.StartReceiveLoop();       // RX en hilo + TX por consola
+  if (!s.Start()) {
+    std::cerr << "[Main] No se pudo iniciar el servidor.\n";
+    return;
+  }
+  s.WaitForClient(); // Intercambio de claves
+  s.StartChatLoop(); // Ahora recibe y envía en paralelo
 }
 
 static void runClient(const std::string& ip, int port) {
   Client c(ip, port);
   if (!c.Connect()) { std::cerr << "[Main] No se pudo conectar.\n"; return; }
 
-  c.ExchangeKeys();          // Recibe pubkey del server y envía la suya
-  c.SendAESKeyEncrypted();   // Envía clave AES cifrada (RSA)
+  c.ExchangeKeys();
+  c.SendAESKeyEncrypted();
 
-  // Si ya implementaste la recepción en paralelo del cliente, descomenta:
-  // c.StartReceiveLoop();
-
-  c.SendEncryptedMessageLoop();
+  // ahora sí, chat en paralelo:
+  c.StartChatLoop();
 }
 
 int main(int argc, char** argv) {

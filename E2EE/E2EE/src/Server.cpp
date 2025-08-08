@@ -60,8 +60,7 @@ void Server::ReceiveEncryptedMessage() {
 	std::cout << "[Server] Mensaje recibido: " << msg << "\n";
 }
 
-void 
-Server::StartReceiveLoop() {
+void Server::StartReceiveLoop() {
 	while (true) {
 		// 1) IV (16)
 		auto iv = m_net.ReceiveDataBinary(m_clientSock, 16);
@@ -96,8 +95,7 @@ Server::StartReceiveLoop() {
 
 
 
-void 
-Server::SendEncryptedMessageLoop() {
+void Server::SendEncryptedMessageLoop() {
 	std::string msg;
 	while (true) {
 		std::cout << "Servidor: ";
@@ -123,4 +121,16 @@ Server::SendEncryptedMessageLoop() {
 		m_net.SendData(m_clientSock, cipher);
 	}
 	std::cout << "[Server] Saliendo del chat.\n";
+}
+
+void 
+Server::StartChatLoop() {
+	std::thread recvThread([&]() {
+		StartReceiveLoop();
+		});
+
+	SendEncryptedMessageLoop();
+
+	if (recvThread.joinable())
+		recvThread.join();
 }
